@@ -1,0 +1,2 @@
+MetaMask must be installed in browser.
+Node modules must be installed in OS.
