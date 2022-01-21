@@ -20,7 +20,6 @@ class App extends Component {
     const rinkeby = (web3.givenProvider.chainId === '0x4')
     this.setState({ rinkeby })
     const accounts = await web3.eth.getAccounts()
-    console.log("accounts", accounts);
     if(accounts.length > 0 && rinkeby) {
       this.setState({ account: accounts[0] })
       const myContract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS)
@@ -48,7 +47,8 @@ class App extends Component {
       releasableAmount: 0,
       beneficiaries: [],
       myContract: 0,
-      loading: true
+      loading: true,
+      pending: false
     }
     this.release = this.release.bind(this)
   }
@@ -102,12 +102,14 @@ class App extends Component {
   }
 
   release() {
-    this.setState({ loading: true })
-    // console.log(this.state.myContract)
+    // this.setState({ loading: true })
     try{
       this.state.myContract.methods.release().send({ from: this.state.account })
       .on('receipt', (receipt) => {
-        this.setState({ loading: false })
+        this.setState({ loading: true })
+        setTimeout(() => {
+          window.location.reload();
+        }, 10000);        
       })
       .on('error', (error, receipt) => {
         this.setState({ loading: false })
